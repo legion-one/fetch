@@ -1,3 +1,4 @@
+
 var global =
   (typeof globalThis !== 'undefined' && globalThis) ||
   (typeof self !== 'undefined' && self) ||
@@ -591,7 +592,14 @@ export function fetch(input, init) {
         }
       }
     }
-
+    // Handle progress if needed
+    if (typeof init.onDownloadProgress === 'function') {
+      request.addEventListener('progress', init.onDownloadProgress);
+    }
+    // Not all browsers support upload events
+    xhr.upload.onprogress = function progress(e) {
+      init.onUploadProgress(e);
+  };
     xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
   })
 }
